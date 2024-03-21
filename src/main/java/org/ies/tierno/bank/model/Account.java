@@ -13,4 +13,8 @@ public class Account {
     private String nif;
 
     private Double balance;
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
 }

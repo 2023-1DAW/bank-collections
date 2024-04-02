@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,27 @@ public class Bank {
     private Map<String, Account> accountsByIban;
 
 
+    public boolean transfer(String from, String to, double amount) {
+        if (!accountsByIban.containsKey(from)) {
+            System.out.println("No existe la cuenta origen");
+        } else if (!accountsByIban.containsKey(to)) {
+            System.out.println("No existe la cuenta destino");
+        } else {
+            var fromAccount = accountsByIban.get(from);
+            if (fromAccount.withdraw(amount)) {
+                var toAccount = accountsByIban.get(to);
+                toAccount.deposit(amount);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean withdraw(String iban, double amount) {
-        if(accountsByIban.containsKey(iban)) {
+        if (accountsByIban.containsKey(iban)) {
             var account = accountsByIban.get(iban);
             return account.withdraw(amount);
-        }else {
+        } else {
             System.out.println("No existe la cuenta con iban " + iban);
             return false;
         }

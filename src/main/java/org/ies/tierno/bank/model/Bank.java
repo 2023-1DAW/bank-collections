@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -20,22 +21,16 @@ public class Bank {
 
     public List<Account> getAccountsByZipCode(int zipCode) {
         // Primero obtenemos los nif de los clientes cuyo codigo postal es el que buscamos
-        Set<String> nifs = new HashSet<>();
-        for(var customer: customers) {
-            if(customer.getZipCode() == zipCode) {
-                nifs.add(customer.getNif());
-            }
-        }
-        // Recorremos la cuentas
-        List<Account> accounts = new ArrayList<>();
-        for(var account: accountsByIban.values()) {
-            // Si el nif de la cuenta es uno de los que estamos buscando
-            if(nifs.contains(account.getNif())) {
-                // Añadimos la cuenta al resultado
-                accounts.add(account);
-            }
-        }
-        return accounts;
+        Set<String> nifs = customers
+                .stream()
+                .map(customer -> customer.getNif())
+                .collect(Collectors.toSet());
+
+        return accountsByIban
+                .values()
+                .stream()
+                .filter(account -> nifs.contains(account.getNif()))
+                .collect(Collectors.toList());
     }
 
     public boolean transfer(String from, String to, double amount) {

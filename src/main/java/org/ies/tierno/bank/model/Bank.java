@@ -60,13 +60,10 @@ public class Bank {
     }
 
     public List<Account> getCustomerAccounts(String nif) {
-        List<Account> accounts = new ArrayList<>();
-        for (var account : accountsByIban.values()) {
-            if (account.getNif().equals(nif)) {
-                accounts.add(account);
-            }
-        }
-        return accounts;
+        return accountsByIban.values()
+                .stream()
+                .filter(account -> account.getNif().equals(nif))
+                .collect(Collectors.toList());
     }
 
     public void deposit(String iban, double amount) {
